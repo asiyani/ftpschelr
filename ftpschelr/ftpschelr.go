@@ -19,15 +19,15 @@ const (
 )
 
 type job struct {
-	ftpDir    string
-	localDir  string
-	fileName  string
-	direction stream
-	startAt   time.Time
-	interval  time.Duration
-	nextRun   time.Time
-	pastRuns  []time.Time
-	ticker    *time.Timer
+	FtpDir    string
+	LocalDir  string
+	FileName  string
+	Direction stream
+	StartAt   time.Time
+	Interval  time.Duration
+	NextRun   time.Time
+	PastRuns  []time.Time
+	Ticker    *time.Timer
 }
 
 // Schedule is data type for ftp scheduler
@@ -65,15 +65,15 @@ func (f *Schedule) ConnAndLogin() (*ftp.ServerConn, error) {
 // CreateSchedules creates new Jobs and adds to Schedule.
 func (f *Schedule) CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, intr time.Duration) {
 	s := job{
-		ftpDir:    fDir,
-		localDir:  lDir,
-		fileName:  fName,
-		direction: d,
-		startAt:   t,
-		interval:  intr,
+		FtpDir:    fDir,
+		LocalDir:  lDir,
+		FileName:  fName,
+		Direction: d,
+		StartAt:   t,
+		Interval:  intr,
 	}
 
-	s.nextRun = s.startAt.Add(s.interval)
+	s.NextRun = s.StartAt.Add(s.Interval)
 
 	f.Jobs = append(f.Jobs, s)
 }
@@ -83,24 +83,24 @@ func (f *Schedule) ScheduleJob(index int) {
 
 	var starDur time.Duration
 
-	//If no future nextRun then then exit.
-	if f.Jobs[index].nextRun.Sub(time.Now()) < 0 {
+	//If no future NextRun then then exit.
+	if f.Jobs[index].NextRun.Sub(time.Now()) < 0 {
 		return
 	}
 
-	if f.Jobs[index].startAt.Sub(time.Now()) < 0 {
-		starDur = f.Jobs[index].nextRun.Sub(time.Now())
+	if f.Jobs[index].StartAt.Sub(time.Now()) < 0 {
+		starDur = f.Jobs[index].NextRun.Sub(time.Now())
 	} else {
-		starDur = f.Jobs[index].startAt.Sub(time.Now())
+		starDur = f.Jobs[index].StartAt.Sub(time.Now())
 	}
 
-	f.Jobs[index].ticker = time.AfterFunc(starDur, func() {
-		if f.Jobs[index].direction == Download {
+	f.Jobs[index].Ticker = time.AfterFunc(starDur, func() {
+		if f.Jobs[index].Direction == Download {
 			downloader(f, f.Jobs[index])
 		} else {
 			uploader(f, f.Jobs[index])
 		}
-		f.Jobs[index].pastRuns = append(f.Jobs[index].pastRuns, f.Jobs[index].nextRun)
+		f.Jobs[index].PastRuns = append(f.Jobs[index].PastRuns, f.Jobs[index].NextRun)
 		updateSchedule(&f.Jobs[index])
 		f.ScheduleJob(index)
 	})
@@ -109,13 +109,13 @@ func (f *Schedule) ScheduleJob(index int) {
 
 // CancelJobs already scheduled and future Jobs.
 func (f *Schedule) CancelJobs(index int) {
-	f.Jobs[index].ticker.Stop()
-	f.Jobs[index].interval = (0 * time.Second)
+	f.Jobs[index].Ticker.Stop()
+	f.Jobs[index].Interval = (0 * time.Second)
 }
 
 func updateSchedule(s *job) {
-	if s.interval != 0 {
-		s.nextRun = s.nextRun.Add(s.interval)
+	if s.Interval != 0 {
+		s.NextRun = s.NextRun.Add(s.Interval)
 	}
 }
 
@@ -135,10 +135,10 @@ func getList(f Scheduler, path string) ([]*ftp.Entry, error) {
 	return entries, nil
 }
 
-// Downloader will download file from ftp server (ftpDir) and store in to local drive (localDir).
+// Downloader will download file from ftp server (FtpDir) and store in to local drive (LocalDir).
 func downloader(f Scheduler, s job) error {
 
-	log.Printf("%s\n", "Downloading a file.."+s.fileName)
+	log.Printf("%s\n", "Downloading a file.."+s.FileName)
 	return nil
 
 	srvCon, err := f.ConnAndLogin()
@@ -146,13 +146,13 @@ func downloader(f Scheduler, s job) error {
 		return fmt.Errorf("error connecting ftp server: %v", err)
 	}
 
-	resp, err := srvCon.Retr(s.ftpDir + "/" + s.fileName)
+	resp, err := srvCon.Retr(s.FtpDir + "/" + s.FileName)
 	if err != nil {
 		return fmt.Errorf("error Retrieving  file %v", err)
 	}
 	defer resp.Close()
 
-	out, err := os.Create(s.localDir + "/" + s.fileName)
+	out, err := os.Create(s.LocalDir + "/" + s.FileName)
 	if err != nil {
 		return fmt.Errorf("error creating file %v", err)
 	}
@@ -165,10 +165,10 @@ func downloader(f Scheduler, s job) error {
 	return nil
 }
 
-// Uploader will Upload file from local drive (localDir) to ftp server dir (ftpDir).
+// Uploader will Upload file from local drive (LocalDir) to ftp server dir (FtpDir).
 func uploader(f Scheduler, s job) error {
 
-	log.Printf("%s\n", "Uploading a file.."+s.fileName)
+	log.Printf("%s\n", "Uploading a file.."+s.FileName)
 	return nil
 
 	srvCon, err := f.ConnAndLogin()
@@ -176,12 +176,12 @@ func uploader(f Scheduler, s job) error {
 		return fmt.Errorf("error connecting ftp server: %v", err)
 	}
 
-	localF, err := os.Open(s.localDir + "/" + s.fileName)
+	localF, err := os.Open(s.LocalDir + "/" + s.FileName)
 	if err != nil {
 		return fmt.Errorf("error opening a file %v", err)
 	}
 
-	err = srvCon.Stor(s.ftpDir+"/"+s.fileName, localF)
+	err = srvCon.Stor(s.FtpDir+"/"+s.FileName, localF)
 
 	if err != nil {
 		return fmt.Errorf("error storing a file to ftp %v", err)
@@ -189,43 +189,3 @@ func uploader(f Scheduler, s job) error {
 
 	return nil
 }
-
-// func main() {
-
-// 	f1 := &Schedule{Name:"f1", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}
-// 	//f1 := &Schedule{SerAddr: "test.rebex.net:21", User: "demo", Pass: "Password"}
-
-// 	f1.CreateSchedules(".", "./cmd", "10MB.zip", Download, time.Now(), (10 * time.Second))
-// 	//f1.CreateSchedules("./upload", "./cmd", "upload_file.txt", Download, time.Now(), 0)
-// 	f1.CreateSchedules("./upload", "./cmd", "local10MB.zip", Upload, time.Now(), (20 * time.Second))
-
-// 	log.Print("Calling shce job func")
-
-// 	for i := range f1.Jobs {
-// 		f1.ScheduleJob(i)
-// 	}
-
-// 	time.Sleep(29 * time.Second)
-// 	log.Print("making interval zero")
-// 	f1.CancelJobs(1)
-
-// 	time.Sleep(65 * time.Second)
-
-// 	// log.Printf("%s\n", "Downloading a file......")
-// 	// if err := downloader(f1, f1.Jobs[0]); err != nil {
-// 	// 	log.Fatal("Error downloading:", err)
-// 	// }
-// 	// log.Printf("%s\n", "Uploading a file......")
-// 	// if err := uploader(f1, f1.Jobs[1]); err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
-
-// 	// entries, err := getList(f1, "./upload")
-// 	// if err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
-// 	// for _, e := range entries {
-// 	// 	fmt.Printf("%s - %v\n", e.Name, e.Type)
-// 	// }
-
-// }

@@ -3,9 +3,14 @@ package db
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/asiyani/ftpschelr/ftpschelr"
 	scribble "github.com/nanobox-io/golang-scribble"
+)
+
+var (
+	now = time.Now().UTC()
 )
 
 func TestNew(t *testing.T) {
@@ -18,11 +23,11 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := New()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
+				t.Errorf("New() = %+v, want %+v", got, tt.want)
 			}
 		})
 	}
@@ -54,13 +59,14 @@ func TestDB_Store(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			tt.args.f.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
 			d, err := New()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			if err := d.Store(tt.args.f); (err != nil) != tt.wantErr {
-				t.Errorf("DB.Store() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("DB.Store() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
 		})
 	}
@@ -99,20 +105,22 @@ func TestDB_Restore(t *testing.T) {
 			want:    ftpschelr.Schedule{},
 		},
 	}
+	tests[0].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
+	tests[1].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d, err := New()
 			if err != nil {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			got, err := d.Restore(tt.args.name)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("DB.Restore() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("DB.Restore() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("DB.Restore() = %v, want %v", got, tt.want)
+				t.Errorf("DB.Restore() = %+v, want %+v", got, tt.want)
 			}
 		})
 	}
@@ -138,18 +146,20 @@ func TestDB_RestoreAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			tt.want[0].CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
+			tt.want[1].CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
 			d, err := New()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			got, err := d.RestoreAll()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("DB.RestoreAll() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("DB.RestoreAll() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("DB.RestoreAll() = %v, want %v", got, tt.want)
+				t.Errorf("DB.RestoreAll() = %+v, want %+v", got, tt.want)
 			}
 		})
 	}
@@ -183,11 +193,11 @@ func TestDB_Remove(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			d, err := New()
 			if err != nil {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			if err := d.Remove(tt.args.name); (err != nil) != tt.wantErr {
-				t.Errorf("DB.Remove() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("DB.Remove() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
 		})
 	}
@@ -211,11 +221,11 @@ func TestDB_RemoveAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			d, err := New()
 			if err != nil {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
 			if err := d.RemoveAll(); (err != nil) != tt.wantErr {
-				t.Errorf("DB.RemoveAll() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("DB.RemoveAll() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
 		})
 	}

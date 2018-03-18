@@ -39,7 +39,6 @@ func (d DB) Restore(name string) (ftpschelr.Schedule, error) {
 	if err != nil {
 		return ftpschelr.Schedule{}, fmt.Errorf("error restoring data from db %v", err)
 	}
-	fmt.Printf("%v\n", temp)
 	return temp, nil
 
 }
