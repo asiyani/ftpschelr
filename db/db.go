@@ -15,7 +15,7 @@ type DB struct {
 
 // New creates a new database.
 func New() (*DB, error) {
-	db, err := scribble.New("./jsondb", nil)
+	db, err := scribble.New(".././jsondb", nil)
 	if err != nil {
 		return nil, fmt.Errorf("error initialising database: %v", err)
 	}
