@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/jlaffaye/ftp"
@@ -32,6 +33,7 @@ type job struct {
 
 // Schedule is data type for ftp scheduler
 type Schedule struct {
+	ID      string //randomally generated id
 	Name    string
 	SerAddr string
 	User    string
@@ -45,6 +47,13 @@ type Scheduler interface {
 	CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, inv time.Duration)
 	ScheduleJob(index int)
 	CancelJobs(index int)
+}
+
+// NewSchedule will create and return new Schedule with random ID.
+func NewSchedule(name, serAddr, user, pass string) *Schedule {
+	return &Schedule{ID: strconv.FormatInt(time.Now().Unix(), 32),
+		Name: name, SerAddr: serAddr, User: user, Pass: pass}
+
 }
 
 // ConnAndLogin will Connect and login to ftp server.

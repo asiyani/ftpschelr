@@ -26,16 +26,16 @@ func New() (*DB, error) {
 // Store will write ftp schedule to json file on disk.
 func (d DB) Store(f ftpschelr.Schedule) error {
 
-	err := d.Write("ftpschelr", f.Name, f)
+	err := d.Write("ftpschelr", f.ID, f)
 	return err
 
 }
 
 // Restore will write ftp schedule to json file on disk.
-func (d DB) Restore(name string) (ftpschelr.Schedule, error) {
+func (d DB) Restore(ID string) (ftpschelr.Schedule, error) {
 
 	var temp ftpschelr.Schedule
-	err := d.Read("ftpschelr", name, &temp)
+	err := d.Read("ftpschelr", ID, &temp)
 	if err != nil {
 		return ftpschelr.Schedule{}, fmt.Errorf("error restoring data from db %v", err)
 	}
@@ -63,9 +63,9 @@ func (d DB) RestoreAll() ([]ftpschelr.Schedule, error) {
 	return fs, nil
 }
 
-// Remove will delete entry for name
-func (d DB) Remove(name string) error {
-	err := d.Delete("ftpschelr", name)
+// Remove will delete entry for given ID
+func (d DB) Remove(ID string) error {
+	err := d.Delete("ftpschelr", ID)
 	return err
 }
 

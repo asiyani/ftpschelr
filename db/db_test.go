@@ -48,12 +48,12 @@ func TestDB_Store(t *testing.T) {
 	}{
 		{
 			name:    "test1",
-			args:    args{ftpschelr.Schedule{Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"}},
+			args:    args{ftpschelr.Schedule{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"}},
 			wantErr: false,
 		},
 		{
 			name:    "test2",
-			args:    args{ftpschelr.Schedule{Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}},
+			args:    args{ftpschelr.Schedule{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}},
 			wantErr: false,
 		},
 	}
@@ -77,7 +77,7 @@ func TestDB_Restore(t *testing.T) {
 		Driver *scribble.Driver
 	}
 	type args struct {
-		name string
+		ID string
 	}
 	tests := []struct {
 		name    string
@@ -88,19 +88,19 @@ func TestDB_Restore(t *testing.T) {
 	}{
 		{
 			name:    "test1",
-			args:    args{name: "FTP_TEST1"},
+			args:    args{ID: "1dbide1"},
 			wantErr: false,
-			want:    ftpschelr.Schedule{Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
+			want:    ftpschelr.Schedule{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
 		},
 		{
 			name:    "test2",
-			args:    args{name: "FTP_TEST2"},
+			args:    args{ID: "1dbide2"},
 			wantErr: false,
-			want:    ftpschelr.Schedule{Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
+			want:    ftpschelr.Schedule{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
 		},
 		{
 			name:    "test3",
-			args:    args{name: "FTP_TEST3"},
+			args:    args{ID: "1dbide3"},
 			wantErr: true,
 			want:    ftpschelr.Schedule{},
 		},
@@ -114,7 +114,7 @@ func TestDB_Restore(t *testing.T) {
 				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
-			got, err := d.Restore(tt.args.name)
+			got, err := d.Restore(tt.args.ID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DB.Restore() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
@@ -139,8 +139,8 @@ func TestDB_RestoreAll(t *testing.T) {
 		{
 			name: "test1",
 			want: []ftpschelr.Schedule{
-				{Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
-				{Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
+				{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
+				{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
 			},
 		},
 	}
@@ -170,7 +170,7 @@ func TestDB_Remove(t *testing.T) {
 		Driver *scribble.Driver
 	}
 	type args struct {
-		name string
+		ID string
 	}
 	tests := []struct {
 		name    string
@@ -180,12 +180,12 @@ func TestDB_Remove(t *testing.T) {
 	}{
 		{
 			name:    "test1",
-			args:    args{name: "FTP_TEST1"},
+			args:    args{ID: "1dbide1"},
 			wantErr: false,
 		},
 		{
 			name:    "test2",
-			args:    args{name: "FTP_TEST3"},
+			args:    args{ID: "1dbide3"},
 			wantErr: true,
 		},
 	}
@@ -196,7 +196,7 @@ func TestDB_Remove(t *testing.T) {
 				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
-			if err := d.Remove(tt.args.name); (err != nil) != tt.wantErr {
+			if err := d.Remove(tt.args.ID); (err != nil) != tt.wantErr {
 				t.Errorf("DB.Remove() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
 		})
