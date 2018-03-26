@@ -24,7 +24,7 @@ func New() (*DB, error) {
 }
 
 // Store will write ftp schedule to json file on disk.
-func (d DB) Store(f ftpschelr.Schedule) error {
+func (d DB) Store(f ftpschelr.Connection) error {
 
 	err := d.Write("ftpschelr", f.ID, f)
 	return err
@@ -32,28 +32,28 @@ func (d DB) Store(f ftpschelr.Schedule) error {
 }
 
 // Restore will write ftp schedule to json file on disk.
-func (d DB) Restore(ID string) (ftpschelr.Schedule, error) {
+func (d DB) Restore(ID string) (ftpschelr.Connection, error) {
 
-	var temp ftpschelr.Schedule
+	var temp ftpschelr.Connection
 	err := d.Read("ftpschelr", ID, &temp)
 	if err != nil {
-		return ftpschelr.Schedule{}, fmt.Errorf("error restoring data from db %v", err)
+		return ftpschelr.Connection{}, fmt.Errorf("error restoring data from db %v", err)
 	}
 	return temp, nil
 
 }
 
 // RestoreAll will restore all schedules from db (json file)
-func (d DB) RestoreAll() ([]ftpschelr.Schedule, error) {
+func (d DB) RestoreAll() ([]ftpschelr.Connection, error) {
 
-	var fs []ftpschelr.Schedule
+	var fs []ftpschelr.Connection
 	records, err := d.ReadAll("ftpschelr")
 	if err != nil {
 		return nil, fmt.Errorf("error reading data from db %v", err)
 	}
 
 	for _, f := range records {
-		fFound := ftpschelr.Schedule{}
+		fFound := ftpschelr.Connection{}
 		if err := json.Unmarshal([]byte(f), &fFound); err != nil {
 			return nil, fmt.Errorf("error decoding data from db %v", err)
 		}

@@ -38,7 +38,7 @@ func TestDB_Store(t *testing.T) {
 		Driver *scribble.Driver
 	}
 	type args struct {
-		f ftpschelr.Schedule
+		f ftpschelr.Connection
 	}
 	tests := []struct {
 		name    string
@@ -48,12 +48,12 @@ func TestDB_Store(t *testing.T) {
 	}{
 		{
 			name:    "test1",
-			args:    args{ftpschelr.Schedule{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"}},
+			args:    args{ftpschelr.Connection{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"}},
 			wantErr: false,
 		},
 		{
 			name:    "test2",
-			args:    args{ftpschelr.Schedule{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}},
+			args:    args{ftpschelr.Connection{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}},
 			wantErr: false,
 		},
 	}
@@ -83,26 +83,26 @@ func TestDB_Restore(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    ftpschelr.Schedule
+		want    ftpschelr.Connection
 		wantErr bool
 	}{
 		{
 			name:    "test1",
 			args:    args{ID: "1dbide1"},
 			wantErr: false,
-			want:    ftpschelr.Schedule{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
+			want:    ftpschelr.Connection{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
 		},
 		{
 			name:    "test2",
 			args:    args{ID: "1dbide2"},
 			wantErr: false,
-			want:    ftpschelr.Schedule{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
+			want:    ftpschelr.Connection{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
 		},
 		{
 			name:    "test3",
 			args:    args{ID: "1dbide3"},
 			wantErr: true,
-			want:    ftpschelr.Schedule{},
+			want:    ftpschelr.Connection{},
 		},
 	}
 	tests[0].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
@@ -133,12 +133,12 @@ func TestDB_RestoreAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []ftpschelr.Schedule
+		want    []ftpschelr.Connection
 		wantErr bool
 	}{
 		{
 			name: "test1",
-			want: []ftpschelr.Schedule{
+			want: []ftpschelr.Connection{
 				{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
 				{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
 			},

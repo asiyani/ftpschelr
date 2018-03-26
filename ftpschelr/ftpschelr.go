@@ -31,8 +31,8 @@ type job struct {
 	Ticker    *time.Timer
 }
 
-// Schedule is data type for ftp scheduler
-type Schedule struct {
+// Connection is data type for ftp scheduler
+type Connection struct {
 	ID      string //randomally generated id
 	Name    string
 	SerAddr string
@@ -41,23 +41,23 @@ type Schedule struct {
 	Jobs    []job
 }
 
-// Scheduler is interface for Schedule Type
-type Scheduler interface {
+// Connector is interface for Connection Type
+type Connector interface {
 	ConnAndLogin() (*ftp.ServerConn, error)
 	CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, inv time.Duration)
 	ScheduleJob(index int)
 	CancelJobs(index int)
 }
 
-// NewSchedule will create and return new Schedule with random ID.
-func NewSchedule(name, serAddr, user, pass string) *Schedule {
-	return &Schedule{ID: strconv.FormatInt(time.Now().Unix(), 32),
+// NewSchedule will create and return new Connection with random ID.
+func NewSchedule(name, serAddr, user, pass string) *Connection {
+	return &Connection{ID: strconv.FormatInt(time.Now().Unix(), 32),
 		Name: name, SerAddr: serAddr, User: user, Pass: pass}
 
 }
 
 // ConnAndLogin will Connect and login to ftp server.
-func (f *Schedule) ConnAndLogin() (*ftp.ServerConn, error) {
+func (f *Connection) ConnAndLogin() (*ftp.ServerConn, error) {
 	srvCon, err := ftp.Dial(f.SerAddr)
 	if err != nil {
 		return nil, err
@@ -71,8 +71,8 @@ func (f *Schedule) ConnAndLogin() (*ftp.ServerConn, error) {
 	return srvCon, nil
 }
 
-// CreateSchedules creates new Jobs and adds to Schedule.
-func (f *Schedule) CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, intr time.Duration) {
+// CreateSchedules creates new Jobs and adds to Connection.
+func (f *Connection) CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, intr time.Duration) {
 	s := job{
 		FtpDir:    fDir,
 		LocalDir:  lDir,
@@ -88,7 +88,7 @@ func (f *Schedule) CreateSchedules(fDir, lDir, fName string, d stream, t time.Ti
 }
 
 // ScheduleJob will schedule Jobs[index].
-func (f *Schedule) ScheduleJob(index int) {
+func (f *Connection) ScheduleJob(index int) {
 
 	var starDur time.Duration
 
@@ -117,7 +117,7 @@ func (f *Schedule) ScheduleJob(index int) {
 }
 
 // CancelJobs already scheduled and future Jobs.
-func (f *Schedule) CancelJobs(index int) {
+func (f *Connection) CancelJobs(index int) {
 	f.Jobs[index].Ticker.Stop()
 	f.Jobs[index].Interval = (0 * time.Second)
 }
@@ -129,7 +129,7 @@ func updateSchedule(s *job) {
 }
 
 // GetList will get list of all files in path directory.
-func getList(f Scheduler, path string) ([]*ftp.Entry, error) {
+func getList(f Connector, path string) ([]*ftp.Entry, error) {
 
 	srvCon, err := f.ConnAndLogin()
 	if err != nil {
@@ -145,7 +145,7 @@ func getList(f Scheduler, path string) ([]*ftp.Entry, error) {
 }
 
 // Downloader will download file from ftp server (FtpDir) and store in to local drive (LocalDir).
-func downloader(f Scheduler, s job) error {
+func downloader(f Connector, s job) error {
 
 	log.Printf("%s\n", "Downloading a file.."+s.FileName)
 	return nil
@@ -175,7 +175,7 @@ func downloader(f Scheduler, s job) error {
 }
 
 // Uploader will Upload file from local drive (LocalDir) to ftp server dir (FtpDir).
-func uploader(f Scheduler, s job) error {
+func uploader(f Connector, s job) error {
 
 	log.Printf("%s\n", "Uploading a file.."+s.FileName)
 	return nil
