@@ -1,4 +1,4 @@
-package ftpschelr
+package schelr
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ type job struct {
 
 // Connection is data type for ftp scheduler
 type Connection struct {
-	ID      string //randomally generated id
+	ID      string
 	Name    string
 	SerAddr string
 	User    string
@@ -49,8 +49,8 @@ type Connector interface {
 	CancelJobs(index int)
 }
 
-// NewSchedule will create and return new Connection with random ID.
-func NewSchedule(name, serAddr, user, pass string) *Connection {
+// NewConnection will create and return new Connection with random ID.
+func NewConnection(name, serAddr, user, pass string) *Connection {
 	return &Connection{ID: strconv.FormatInt(time.Now().Unix(), 32),
 		Name: name, SerAddr: serAddr, User: user, Pass: pass}
 

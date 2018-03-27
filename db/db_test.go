@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/asiyani/ftpschelr/ftpschelr"
+	"github.com/asiyani/ftpschelr/schelr"
 	scribble "github.com/nanobox-io/golang-scribble"
 )
 
@@ -38,7 +38,7 @@ func TestDB_Store(t *testing.T) {
 		Driver *scribble.Driver
 	}
 	type args struct {
-		f ftpschelr.Connection
+		f schelr.Connection
 	}
 	tests := []struct {
 		name    string
@@ -48,18 +48,18 @@ func TestDB_Store(t *testing.T) {
 	}{
 		{
 			name:    "test1",
-			args:    args{ftpschelr.Connection{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"}},
+			args:    args{schelr.Connection{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"}},
 			wantErr: false,
 		},
 		{
 			name:    "test2",
-			args:    args{ftpschelr.Connection{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}},
+			args:    args{schelr.Connection{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""}},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.args.f.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
+			tt.args.f.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 			d, err := New()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
@@ -83,30 +83,30 @@ func TestDB_Restore(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    ftpschelr.Connection
+		want    schelr.Connection
 		wantErr bool
 	}{
 		{
 			name:    "test1",
 			args:    args{ID: "1dbide1"},
 			wantErr: false,
-			want:    ftpschelr.Connection{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
+			want:    schelr.Connection{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
 		},
 		{
 			name:    "test2",
 			args:    args{ID: "1dbide2"},
 			wantErr: false,
-			want:    ftpschelr.Connection{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
+			want:    schelr.Connection{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
 		},
 		{
 			name:    "test3",
 			args:    args{ID: "1dbide3"},
 			wantErr: true,
-			want:    ftpschelr.Connection{},
+			want:    schelr.Connection{},
 		},
 	}
-	tests[0].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
-	tests[1].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
+	tests[0].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+	tests[1].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d, err := New()
@@ -133,12 +133,12 @@ func TestDB_RestoreAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []ftpschelr.Connection
+		want    []schelr.Connection
 		wantErr bool
 	}{
 		{
 			name: "test1",
-			want: []ftpschelr.Connection{
+			want: []schelr.Connection{
 				{ID: "1dbide1", Name: "FTP_TEST1", SerAddr: "my.ftp.serv.net:21", User: "anonymous", Pass: "pass12$*"},
 				{ID: "1dbide2", Name: "FTP_TEST2", SerAddr: "speedtest.tele2.net:21", User: "anonymous", Pass: ""},
 			},
@@ -146,8 +146,8 @@ func TestDB_RestoreAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.want[0].CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
-			tt.want[1].CreateSchedules(".", "./ftpfiles", "10MB.zip", ftpschelr.Download, now, (10 * time.Second))
+			tt.want[0].CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+			tt.want[1].CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 			d, err := New()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)

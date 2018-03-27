@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/asiyani/ftpschelr/ftpschelr"
+	"github.com/asiyani/ftpschelr/schelr"
 	scribble "github.com/nanobox-io/golang-scribble"
 )
 
@@ -15,7 +15,7 @@ type DB struct {
 
 // New creates a new database.
 func New() (*DB, error) {
-	db, err := scribble.New(".././jsondb", nil)
+	db, err := scribble.New("./jsonDB", nil)
 	if err != nil {
 		return nil, fmt.Errorf("error initialising database: %v", err)
 	}
@@ -24,7 +24,7 @@ func New() (*DB, error) {
 }
 
 // Store will write ftp schedule to json file on disk.
-func (d DB) Store(f ftpschelr.Connection) error {
+func (d DB) Store(f schelr.Connection) error {
 
 	err := d.Write("ftpschelr", f.ID, f)
 	return err
@@ -32,28 +32,28 @@ func (d DB) Store(f ftpschelr.Connection) error {
 }
 
 // Restore will write ftp schedule to json file on disk.
-func (d DB) Restore(ID string) (ftpschelr.Connection, error) {
+func (d DB) Restore(ID string) (schelr.Connection, error) {
 
-	var temp ftpschelr.Connection
+	var temp schelr.Connection
 	err := d.Read("ftpschelr", ID, &temp)
 	if err != nil {
-		return ftpschelr.Connection{}, fmt.Errorf("error restoring data from db %v", err)
+		return schelr.Connection{}, fmt.Errorf("error restoring data from db %v", err)
 	}
 	return temp, nil
 
 }
 
 // RestoreAll will restore all schedules from db (json file)
-func (d DB) RestoreAll() ([]ftpschelr.Connection, error) {
+func (d DB) RestoreAll() ([]schelr.Connection, error) {
 
-	var fs []ftpschelr.Connection
+	var fs []schelr.Connection
 	records, err := d.ReadAll("ftpschelr")
 	if err != nil {
 		return nil, fmt.Errorf("error reading data from db %v", err)
 	}
 
 	for _, f := range records {
-		fFound := ftpschelr.Connection{}
+		fFound := schelr.Connection{}
 		if err := json.Unmarshal([]byte(f), &fFound); err != nil {
 			return nil, fmt.Errorf("error decoding data from db %v", err)
 		}
