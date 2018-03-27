@@ -3,6 +3,7 @@ package webapp
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/asiyani/ftpschelr/db"
@@ -18,7 +19,8 @@ var (
 func listConnectionsHandler(w http.ResponseWriter, r *http.Request) {
 	c, err := dB.RestoreAll()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "DB Error while restoring data", http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(c)
@@ -39,13 +41,15 @@ func createConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	err := json.NewDecoder(r.Body).Decode(&d)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "Error while decoding request body.", http.StatusBadRequest)
 		return
 	}
 	f := schelr.NewConnection(d.Name, d.SerAddr, d.User, d.Pass)
 	err = dB.Store(*f)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "DB Error while storing data", http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(f)
@@ -56,7 +60,8 @@ func getConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	c, err := dB.Restore(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "DB Error while restoring data", http.StatusNotFound)
 		return
 	}
 	json.NewEncoder(w).Encode(c)
@@ -67,21 +72,23 @@ func updateConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	var cnew schelr.Connection
 	id := mux.Vars(r)["id"]
 	if r.Body == nil {
-		http.Error(w, "Please send a request body", 400)
+		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
 	err := json.NewDecoder(r.Body).Decode(&cnew)
 	if err != nil {
-		http.Error(w, err.Error(), 400)
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "Error while decoding request body.", http.StatusBadRequest)
 		return
 	}
 	if id != cnew.ID {
-		http.Error(w, "Connection ID in body and url is different.", 400)
+		http.Error(w, "Connection ID in body and url is different.", http.StatusBadRequest)
 		return
 	}
 	err = dB.Store(cnew)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "DB Error while storing data", http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(cnew)
