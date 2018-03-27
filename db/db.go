@@ -3,6 +3,7 @@ package db
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/asiyani/ftpschelr/schelr"
 	scribble "github.com/nanobox-io/golang-scribble"
@@ -14,13 +15,13 @@ type DB struct {
 }
 
 // New creates a new database.
-func New() (*DB, error) {
+func New() *DB {
 	db, err := scribble.New("./jsonDB", nil)
 	if err != nil {
-		return nil, fmt.Errorf("error initialising database: %v", err)
+		log.Fatalf("error initialising database: %v", err)
 	}
 
-	return &DB{db}, nil
+	return &DB{db}
 }
 
 // Store will write ftp schedule to json file on disk.

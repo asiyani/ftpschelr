@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	dB, err = db.New()
+	dB = db.New()
 )
 
 // ListConnectionsHandler will send list of all connection in json formate

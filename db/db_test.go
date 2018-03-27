@@ -21,11 +21,7 @@ func TestNew(t *testing.T) {
 	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := New()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
-				return
-			}
+			got := New()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %+v, want %+v", got, tt.want)
 			}
@@ -60,11 +56,7 @@ func TestDB_Store(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.args.f.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
-			d, err := New()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
-				return
-			}
+			d := New()
 			if err := d.Store(tt.args.f); (err != nil) != tt.wantErr {
 				t.Errorf("DB.Store() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
@@ -109,11 +101,8 @@ func TestDB_Restore(t *testing.T) {
 	tests[1].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d, err := New()
-			if err != nil {
-				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
-				return
-			}
+			d := New()
+
 			got, err := d.Restore(tt.args.ID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DB.Restore() error = %+v, wantErr %+v", err, tt.wantErr)
@@ -148,11 +137,8 @@ func TestDB_RestoreAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.want[0].CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 			tt.want[1].CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
-			d, err := New()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
-				return
-			}
+			d := New()
+
 			got, err := d.RestoreAll()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DB.RestoreAll() error = %+v, wantErr %+v", err, tt.wantErr)
@@ -191,11 +177,8 @@ func TestDB_Remove(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d, err := New()
-			if err != nil {
-				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
-				return
-			}
+			d := New()
+
 			if err := d.Remove(tt.args.ID); (err != nil) != tt.wantErr {
 				t.Errorf("DB.Remove() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
@@ -219,11 +202,8 @@ func TestDB_RemoveAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d, err := New()
-			if err != nil {
-				t.Errorf("New() error = %+v, wantErr %+v", err, tt.wantErr)
-				return
-			}
+			d := New()
+
 			if err := d.RemoveAll(); (err != nil) != tt.wantErr {
 				t.Errorf("DB.RemoveAll() error = %+v, wantErr %+v", err, tt.wantErr)
 			}
