@@ -20,25 +20,25 @@ const (
 )
 
 type job struct {
-	FtpDir    string
-	LocalDir  string
-	FileName  string
-	Direction stream
-	StartAt   time.Time
-	Interval  time.Duration
-	NextRun   time.Time
-	PastRuns  []time.Time
-	Ticker    *time.Timer
+	FtpDir    string        `json:"ftp_dir"`
+	LocalDir  string        `json:"local_dir"`
+	FileName  string        `json:"filename"`
+	Direction stream        `json:"direction"`
+	StartAt   time.Time     `json:"startAt"`
+	Interval  time.Duration `json:"interval"`
+	NextRun   time.Time     `json:"next_run"`
+	PastRuns  []time.Time   `json:"pastRuns"`
+	Ticker    *time.Timer   `json:"-"`
 }
 
 // Connection is data type for ftp scheduler
 type Connection struct {
-	ID      string
-	Name    string
-	SerAddr string
-	User    string
-	Pass    string
-	Jobs    []job
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	SerAddr string `json:"server_add"`
+	User    string `json:"username"`
+	Pass    string `json:"password"`
+	Jobs    []job  `json:"jobs"`
 }
 
 // Connector is interface for Connection Type
