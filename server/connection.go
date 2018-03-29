@@ -30,13 +30,13 @@ func listConnectionsHandler(w http.ResponseWriter, r *http.Request) {
 func createConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	type data struct {
 		Name    string `json:"name"`
-		SerAddr string `json:"serAddr"`
+		SerAddr string `json:"server_add"`
 		User    string `json:"username"`
 		Pass    string `json:"password"`
 	}
 	var d data
-	http.Error(w, "Please send a request body", http.StatusBadRequest)
 	if r.Body == nil {
+		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
 	err := json.NewDecoder(r.Body).Decode(&d)
