@@ -2,12 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>FTP Scheduler</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="initial-scale=1, shrink-to-fit=no, width=device-width" name="viewport">
+
+    <!-- CSS -->
+    <!-- Add Material font (Roboto) and Material icon as needed -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Add Material CSS, replace Bootstrap CSS -->
+    <link href="css/material.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -29,12 +35,61 @@
         </div>
     </nav>
 
-    <div class="container"></div>
+    <div class="container-fluid">
+
+        <div id="myModal" class="modal fade" tabindex="-1" style="width:75%">
+        </div>
+
+        <div class="row">
+            <div class="col-12  col-md-5">
+                <nav class="navbar navbar-dark" style="background-color: #9E9E9E;">
+                    <span class="navbar-brand mb-0 h1">connections</span>
+                    <button type="button" onclick="addConnection()" class="btn btn-info">ADD</button>
+                </nav>
+                <div id="connectionCont" class="scrollBox">
+                </div>
+            </div>
+
+            <div class="col-12  col-md-7">
+                <nav class="navbar navbar-dark" style="background-color: #9E9E9E;">
+                    <span class="navbar-brand mb-0 h1">Jobs</span>
+                    <!-- <button type="button" onclick="addConnection()" class="btn btn-info">ADD</button> -->
+                </nav>
+                <div id="jobsCont" class="scrollBox">
+                    <div class="card">
+                        <div class="card-body">
+                            <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&#9432;</span>
+                            </button>
+                            <p> File Name </p>
+                            <p> Download </p>
+                            <p> Status </p>
+                            <a href="#" class="card-link">edit</a>
+                            <a href="#" class="card-link">cancel this</a>
+                            <a href="#" class="card-link">cancel all</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
     </div>
 
+
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Then Material JavaScript on top of Bootstrap JavaScript -->
+    <script src="js/material.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 
