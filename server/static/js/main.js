@@ -1,10 +1,5 @@
-$(document).ready(() => {
-    updateData();
-})
 
-
-
-async function updateData() {
+async function updateConnectionData() {
     try {
         var cons = await getConnections();
         renderConnections(cons);

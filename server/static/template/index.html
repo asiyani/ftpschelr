@@ -1,0 +1,63 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang="en">
+
+{{template "header"}}
+
+<body>
+
+    {{template "navbar"}}
+
+    <div class="container-fluid">
+
+        <div id="myModal" class="modal fade" tabindex="-1" style="width:75%">
+        </div>
+
+        <div class="row">
+            <div class="col-12  col-md-5">
+                <nav class="navbar navbar-dark" style="background-color: #9E9E9E;">
+                    <span class="navbar-brand mb-0 h1">connections</span>
+                    <button type="button" onclick="addConnection()" class="btn btn-info">ADD</button>
+                </nav>
+                <div id="connectionCont" class="scrollBox">
+                </div>
+            </div>
+
+            <div class="col-12  col-md-7">
+                <nav class="navbar navbar-dark" style="background-color: #9E9E9E;">
+                    <span class="navbar-brand mb-0 h1">Jobs</span>
+                    <!-- <button type="button" onclick="addConnection()" class="btn btn-info">ADD</button> -->
+                </nav>
+                <div id="jobsCont" class="scrollBox">
+                    <div class="card">
+                        <div class="card-body">
+                            <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&#9432;</span>
+                            </button>
+                            <p> File Name </p>
+                            <p> Download </p>
+                            <p> Status </p>
+                            <a href="#" class="card-link">edit</a>
+                            <a href="#" class="card-link">cancel this</a>
+                            <a href="#" class="card-link">cancel all</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    {{template "jsScripts"}}
+    <script>
+        $(document).ready(() => {
+            updateConnectionData();
+        })
+    </script>
+</body>
+
+</html>
+{{end}}
