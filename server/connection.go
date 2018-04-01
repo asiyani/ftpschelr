@@ -85,7 +85,18 @@ func updateConnectionHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Connection ID in body and url is different.", http.StatusBadRequest)
 		return
 	}
-	err = dB.Store(cnew)
+	c, err := dB.Restore(id)
+	if err != nil {
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "DB error cant find requested connection", http.StatusBadRequest)
+		return
+	}
+	c.Name = cnew.Name
+	c.SerAddr = cnew.SerAddr
+	c.User = cnew.User
+	c.Pass = cnew.Pass
+
+	err = dB.Store(c)
 	if err != nil {
 		log.Printf("%s\n", err.Error())
 		http.Error(w, "DB Error while storing data", http.StatusInternalServerError)
