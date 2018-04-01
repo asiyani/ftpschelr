@@ -98,3 +98,38 @@ function submitConnForm(event) {
         })
         .catch(e => console.log(e))
 }
+
+function enableForm(){
+    $("#connectionForm fieldset").prop('disabled', false);
+    $("button[name='edit']").hide();
+    $("button[name='submit']").show();
+    $("button[name='cancel']").show();
+
+}
+
+function disableForm(){
+    $("#connectionForm fieldset").prop('disabled', true);
+    $("button[name='edit']").show();
+    $("button[name='submit']").hide();
+    $("button[name='cancel']").hide();
+}
+
+function deleteConn(){
+
+    id = $("input[name='id']").val();
+
+    fetch(`/api/v1/connection/${id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: {
+            'content-type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (response.status !== 200){
+            throw response
+        }
+        window.location.href = "/";
+    })
+    .catch(e => console.log(e))
+}

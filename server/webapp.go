@@ -4,15 +4,36 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
+var funcMap = template.FuncMap{
+
+	"inc": func(i int) int {
+		return i + 1
+	},
+
+	"formateDate": func(t time.Time) string {
+		return t.Format("02-01-2006 15:04:05")
+	},
+}
+
 // compile all templates and cache them
-var templt = template.Must(template.ParseGlob("./server/static/template/*"))
+var templt = template.Must(template.New("mytemplate").Funcs(funcMap).ParseGlob("./server/static/template/*"))
 
 func loadConnectionHandler(w http.ResponseWriter, r *http.Request) {
-	err := templt.ExecuteTemplate(w, "connection", nil)
+
+	id := mux.Vars(r)["id"]
+	c, err := dB.Restore(id)
+	if err != nil {
+		log.Printf("%s\n", err.Error())
+		http.Error(w, "DB Error while restoring data", http.StatusNotFound)
+		return
+	}
+
+	err = templt.ExecuteTemplate(w, "connection", c)
 	if err != nil {
 		log.Printf("%s\n", err.Error())
 		http.Error(w, "Error Executing template file.", http.StatusInternalServerError)

@@ -1,6 +1,7 @@
-.row{
+.row {
     padding: 10px;
 }
+
 .card {
     margin: 10px;
 }
@@ -14,12 +15,24 @@
     z-index: 10040;
     overflow: auto;
     overflow-y: auto;
- }
-
-.scrollBox {
-    overflow:scroll;
 }
 
-#connectionCont{
+.scrollBox {
+    overflow: scroll;
+}
+
+#connectionCont {
     height: 500px;
+}
+
+.borderBox {
+    margin: 10px;
+    padding: 10px;
+    border-width: .2rem;
+    border: solid;
+    border-color: #f7f7f9;
+}
+
+.form-control:disabled{
+    color: purple;
 }
