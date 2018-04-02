@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
@@ -20,6 +21,7 @@ const (
 )
 
 type job struct {
+	ID        string        `json:"id"`
 	FtpDir    string        `json:"ftp_dir"`
 	LocalDir  string        `json:"local_dir"`
 	FileName  string        `json:"filename"`
@@ -44,7 +46,7 @@ type Connection struct {
 // Connector is interface for Connection Type
 type Connector interface {
 	ConnAndLogin() (*ftp.ServerConn, error)
-	CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, inv time.Duration)
+	CreateJob(fDir, lDir, fName string, d stream, t time.Time, inv time.Duration)
 	ScheduleJob(index int)
 	CancelJobs(index int)
 }
@@ -71,9 +73,10 @@ func (f *Connection) ConnAndLogin() (*ftp.ServerConn, error) {
 	return srvCon, nil
 }
 
-// CreateSchedules creates new Jobs and adds to Connection.
-func (f *Connection) CreateSchedules(fDir, lDir, fName string, d stream, t time.Time, intr time.Duration) {
+// CreateJob creates new Jobs and adds to Connection.
+func (f *Connection) CreateJob(fDir, lDir, fName string, d stream, t time.Time, intr time.Duration) {
 	s := job{
+		ID:        strconv.FormatInt(time.Now().Unix()+rand.Int63(), 32),
 		FtpDir:    fDir,
 		LocalDir:  lDir,
 		FileName:  fName,

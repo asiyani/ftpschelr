@@ -55,7 +55,7 @@ func TestDB_Store(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.args.f.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+			tt.args.f.CreateJob(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 			d := New()
 			if err := d.Store(tt.args.f); (err != nil) != tt.wantErr {
 				t.Errorf("DB.Store() error = %+v, wantErr %+v", err, tt.wantErr)
@@ -97,8 +97,8 @@ func TestDB_Restore(t *testing.T) {
 			want:    schelr.Connection{},
 		},
 	}
-	tests[0].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
-	tests[1].want.CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+	tests[0].want.CreateJob(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+	tests[1].want.CreateJob(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := New()
@@ -135,8 +135,8 @@ func TestDB_RestoreAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.want[0].CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
-			tt.want[1].CreateSchedules(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+			tt.want[0].CreateJob(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
+			tt.want[1].CreateJob(".", "./ftpfiles", "10MB.zip", schelr.Download, now, (10 * time.Second))
 			d := New()
 
 			got, err := d.RestoreAll()

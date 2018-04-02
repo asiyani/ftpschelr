@@ -50,7 +50,7 @@
                 <caption>List of Jobs</caption>
                 <thead class="thead-light">
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
                         <th scope="col">Filename</th>
                         <th scope="col">Job Type</th>
                         <th scope="col">FTP Dir</th>
@@ -61,7 +61,7 @@
                 <tbody>
                     {{range $i, $j := .Jobs}}
                     <tr>
-                        <th scope="row">{{inc $i}}</th>
+                        <th scope="row">{{$j.ID}}</th>
                         <td>{{$j.FileName}}</td>
                         <td>{{$j.Direction}}</td>
                         <td>{{$j.FtpDir}}</td>
