@@ -46,7 +46,6 @@ type Connection struct {
 // Connector is interface for Connection Type
 type Connector interface {
 	ConnAndLogin() (*ftp.ServerConn, error)
-	CreateJob(fDir, lDir, fName string, d Stream, t time.Time, inv time.Duration)
 	ScheduleJob(j *job)
 	CancelJobs(j *job)
 }

@@ -6,7 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/asiyani/ftpschelr/db"
 	"github.com/gorilla/mux"
+)
+
+var (
+	dB = db.New()
 )
 
 var funcMap = template.FuncMap{
@@ -66,6 +71,11 @@ func NewServer() {
 	router.HandleFunc("/api/v1/connection/{id}", deleteConnectionHandler).Methods("DELETE")
 
 	// jobs
+	router.HandleFunc("/api/v1/connection/{cid}/jobs", listJobsHandler).Methods("GET")
+	router.HandleFunc("/api/v1/connection/{cid}/job", createJobHandler).Methods("POST")
+	router.HandleFunc("/api/v1/connection/{cid}/job/{jid}", getJobHandler).Methods("GET")
+	//router.HandleFunc("/api/v1/connection/{cid}/job/{jid}", updateJobHandler).Methods("PUT")
+	router.HandleFunc("/api/v1/connection/{cid}/job/{jid}", deleteJobHandler).Methods("DELETE")
 
 	router.HandleFunc("/", loadIndexHandler)
 

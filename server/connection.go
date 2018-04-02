@@ -6,13 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/asiyani/ftpschelr/db"
 	"github.com/asiyani/ftpschelr/schelr"
 	"github.com/gorilla/mux"
-)
-
-var (
-	dB = db.New()
 )
 
 // ListConnectionsHandler will send list of all connection in json formate
