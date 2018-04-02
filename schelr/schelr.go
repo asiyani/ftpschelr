@@ -12,11 +12,11 @@ import (
 	"github.com/jlaffaye/ftp"
 )
 
-type stream int
+type Stream int
 
 const (
-	//Download and upload stream type
-	Download stream = iota
+	//Download and upload Stream type
+	Download Stream = iota
 	Upload
 )
 
@@ -25,7 +25,7 @@ type job struct {
 	FtpDir    string        `json:"ftp_dir"`
 	LocalDir  string        `json:"local_dir"`
 	FileName  string        `json:"filename"`
-	Direction stream        `json:"direction"`
+	Direction Stream        `json:"direction"`
 	StartAt   time.Time     `json:"startAt"`
 	Interval  time.Duration `json:"interval"`
 	NextRun   time.Time     `json:"next_run"`
@@ -46,9 +46,9 @@ type Connection struct {
 // Connector is interface for Connection Type
 type Connector interface {
 	ConnAndLogin() (*ftp.ServerConn, error)
-	CreateJob(fDir, lDir, fName string, d stream, t time.Time, inv time.Duration)
-	ScheduleJob(index int)
-	CancelJobs(index int)
+	CreateJob(fDir, lDir, fName string, d Stream, t time.Time, inv time.Duration)
+	ScheduleJob(j *job)
+	CancelJobs(j *job)
 }
 
 // NewConnection will create and return new Connection with random ID.
@@ -74,7 +74,7 @@ func (f *Connection) ConnAndLogin() (*ftp.ServerConn, error) {
 }
 
 // CreateJob creates new Jobs and adds to Connection.
-func (f *Connection) CreateJob(fDir, lDir, fName string, d stream, t time.Time, intr time.Duration) {
+func (f *Connection) CreateJob(fDir, lDir, fName string, d Stream, t time.Time, intr time.Duration) {
 	s := job{
 		ID:        strconv.FormatInt(time.Now().Unix()+rand.Int63(), 32),
 		FtpDir:    fDir,
@@ -91,38 +91,52 @@ func (f *Connection) CreateJob(fDir, lDir, fName string, d stream, t time.Time, 
 }
 
 // ScheduleJob will schedule Jobs[index].
-func (f *Connection) ScheduleJob(index int) {
-
+func (f *Connection) ScheduleJob(j *job) {
+	//var j *job
 	var starDur time.Duration
+	// for i, job := range f.Jobs {
+	// 	if job.ID == id {
+	// 		j = &f.Jobs[i]
+	// 		break
+	// 	}
+	// }
 
 	//If no future NextRun then then exit.
-	if f.Jobs[index].NextRun.Sub(time.Now()) < 0 {
+	if j.NextRun.Sub(time.Now()) < 0 {
 		return
 	}
 
-	if f.Jobs[index].StartAt.Sub(time.Now()) < 0 {
-		starDur = f.Jobs[index].NextRun.Sub(time.Now())
+	if j.StartAt.Sub(time.Now()) < 0 {
+		starDur = j.NextRun.Sub(time.Now())
 	} else {
-		starDur = f.Jobs[index].StartAt.Sub(time.Now())
+		starDur = j.StartAt.Sub(time.Now())
 	}
 
-	f.Jobs[index].Ticker = time.AfterFunc(starDur, func() {
-		if f.Jobs[index].Direction == Download {
-			downloader(f, f.Jobs[index])
+	j.Ticker = time.AfterFunc(starDur, func() {
+		if j.Direction == Download {
+			downloader(f, *j)
 		} else {
-			uploader(f, f.Jobs[index])
+			uploader(f, *j)
 		}
-		f.Jobs[index].PastRuns = append(f.Jobs[index].PastRuns, f.Jobs[index].NextRun)
-		updateSchedule(&f.Jobs[index])
-		f.ScheduleJob(index)
+		j.PastRuns = append(j.PastRuns, j.NextRun)
+		updateSchedule(j)
+		f.ScheduleJob(j)
 	})
 
 }
 
 // CancelJobs already scheduled and future Jobs.
-func (f *Connection) CancelJobs(index int) {
-	f.Jobs[index].Ticker.Stop()
-	f.Jobs[index].Interval = (0 * time.Second)
+func (f *Connection) CancelJobs(j *job) {
+	// var j *job
+	// for i, job := range f.Jobs {
+	// 	if job.ID == id {
+	// 		j = &f.Jobs[i]
+	// 		break
+	// 	}
+	// }
+
+	j.Ticker.Stop()
+	j.Interval = (0 * time.Second)
 }
 
 func updateSchedule(s *job) {
